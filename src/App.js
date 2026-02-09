@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Trash2, TreeDeciduous, Sprout, 
-  Dumbbell, Brain, Zap, Glasses
+  Dumbbell, Brain, Glasses
 } from 'lucide-react';
 
 function App() {
@@ -52,7 +52,6 @@ function App() {
     }
   };
 
-  // --- LOGIC CALCULATIONS (Outside JSX to prevent build errors) ---
   const totalPages = logs.reduce((acc, curr) => acc + (parseInt(curr.reading) || 0), 0);
   const totalFruits = logs.reduce((acc, curr) => acc + (parseInt(curr.fruits) || 0), 0);
   const workoutDays = logs.filter(l => l.exercise && l.exercise.trim() !== '').length;
@@ -61,7 +60,6 @@ function App() {
   const treesCompleted = Math.floor(totalFruits / 2);
   const learnMins = parseInt(todayData.learning) || 0;
 
-  // We define the style objects here so the linter sees them as pure JS
   const readingBarStyle = {
     width: (totalPages % 250 / 2.5) + "%"
   };
@@ -79,7 +77,7 @@ function App() {
       
       {showConfetti && (
         <div className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm">
-          <div className="text-4xl font-black text-indigo-600 animate-pulse uppercase">SYNAPSE CHARGED ⚡️</div>
+          <div className="text-4xl font-black text-indigo-600 animate-pulse uppercase">SYNAPSE CHARGED</div>
         </div>
       )}
 
@@ -91,13 +89,12 @@ function App() {
           </div>
           <div className="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
             <span className="text-[10px] font-black uppercase text-slate-400 block tracking-widest leading-none mb-1">Uptime</span>
-            <span className="text-2xl font-black text-slate-900 leading-none">{logs.length} <span className="text-xs text-slate-400">Days</span></span>
+            <span className="text-2xl font-black text-slate-900 leading-none">{logs.length} <span className="text-xs text-slate-400 font-bold uppercase">Days</span></span>
           </div>
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           
-          {/* LIBRARY */}
           <div className="lg:col-span-2 bg-white rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
             <div className="flex justify-between items-center mb-8">
               <h3 className="font-bold text-slate-400 uppercase tracking-widest text-[10px] flex items-center gap-2">
@@ -120,7 +117,6 @@ function App() {
             </div>
           </div>
 
-          {/* SYNAPSE CORE */}
           <div className="bg-white rounded-[2.5rem] p-8 shadow-xl shadow-indigo-100/50 border border-indigo-50 flex flex-col items-center justify-center relative overflow-hidden">
              <div className="absolute top-6 left-8">
                 <h3 className="font-bold text-slate-400 uppercase tracking-widest text-[10px]">Neural Status</h3>
@@ -142,7 +138,6 @@ function App() {
           </div>
         </div>
 
-        {/* ORCHARD & TRAINING */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
            <div className="bg-white rounded-[2rem] p-8 shadow-lg border border-emerald-50">
               <h3 className="font-bold text-slate-400 uppercase tracking-widest text-[10px] mb-6 flex items-center gap-2">
@@ -170,7 +165,6 @@ function App() {
            </div>
         </div>
 
-        {/* INPUT FORM */}
         <div className="bg-white rounded-[2.5rem] p-8 shadow-2xl border border-slate-100 mb-8">
           <form onSubmit={saveDay} className="grid grid-cols-2 lg:grid-cols-6 gap-6 items-end">
             <div className="col-span-2 lg:col-span-1">
@@ -199,7 +193,6 @@ function App() {
           </form>
         </div>
 
-        {/* LOGS TABLE */}
         <div className="bg-white rounded-[2rem] overflow-hidden border border-slate-100 shadow-sm mb-10">
            <table className="w-full text-left">
              <thead className="bg-slate-50 text-[10px] font-black uppercase text-slate-400">
