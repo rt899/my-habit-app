@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Save, Trash2, Book, TreeDeciduous, Sprout, 
-  Dumbbell, Brain, Zap, Monitor
+  Dumbbell, Brain, Monitor
 } from 'lucide-react';
 
-// Renamed the component to match your project preference
 function App() {
   const [logs, setLogs] = useState([]);
   const [todayData, setTodayData] = useState({
@@ -16,7 +15,6 @@ function App() {
     screentime: ''
   });
 
-  // Load data from LocalStorage on startup
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('myHabitAppData') || '[]');
     setLogs(saved);
@@ -31,7 +29,6 @@ function App() {
     
     setLogs(updated);
     localStorage.setItem('myHabitAppData', JSON.stringify(updated));
-    // Reset fields for next entry
     setTodayData({ ...todayData, reading: '', exercise: '', fruits: 0, learning: '', screentime: '' });
   };
 
@@ -43,7 +40,6 @@ function App() {
     }
   };
 
-  // Logic for the visual "Ecosystem"
   const totalPages = logs.reduce((acc, curr) => acc + (parseInt(curr.reading) || 0), 0);
   const totalFruits = logs.reduce((acc, curr) => acc + (parseInt(curr.fruits) || 0), 0);
   const workoutDays = logs.filter(l => l.exercise && l.exercise.trim() !== '').length;
@@ -64,7 +60,6 @@ function App() {
     <div className="min-h-screen bg-[#f1f5f9] p-4 md:p-8 text-slate-900 font-sans">
       <div className="max-w-6xl mx-auto">
         
-        {/* HEADER */}
         <header className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-4xl font-black tracking-tighter text-slate-900 uppercase">MY_HABIT_APP</h1>
@@ -76,7 +71,6 @@ function App() {
           </div>
         </header>
 
-        {/* FITNESS STADIUM */}
         <div className="bg-slate-900 rounded-[3rem] p-8 mb-8 text-white shadow-2xl flex flex-col md:flex-row items-center gap-10 border-b-[12px] border-orange-600/20">
            <div className="relative">
               <svg className="w-36 h-36 transform -rotate-90">
@@ -98,7 +92,6 @@ function App() {
            </div>
         </div>
 
-        {/* ECOSYSTEM GRIDS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <div className="bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-sm">
             <h3 className="text-[10px] font-black text-emerald-600 uppercase mb-4">Orchard (2 Fruits = 1 Tree)</h3>
@@ -138,7 +131,6 @@ function App() {
           </div>
         </div>
 
-        {/* FORM */}
         <div className="bg-white p-8 rounded-[3rem] shadow-2xl border border-slate-200 mb-10">
           <form onSubmit={saveDay} className="grid grid-cols-2 lg:grid-cols-6 gap-6 items-end">
             <div className="col-span-2 lg:col-span-1">
@@ -171,7 +163,6 @@ function App() {
           </div>
         </div>
 
-        {/* TABLE */}
         <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
            <div className="overflow-x-auto">
              <table className="w-full text-left">
@@ -207,5 +198,4 @@ function App() {
   );
 }
 
-// Ensure this matches the internal React entry point
 export default App;
