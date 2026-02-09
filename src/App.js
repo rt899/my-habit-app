@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Trash2, TreeDeciduous, Sprout, 
-  Dumbbell, Brain, Glasses, Flame, Activity
+  Brain, Glasses, Flame
 } from 'lucide-react';
 
 function App() {
@@ -66,11 +66,9 @@ function App() {
   const isSyncing = learnMins >= 30 && learnMins < 60;
   const isFlow = learnMins >= 60;
 
-  // SAFE CALCULATION: Pure numbers only
-  const readVal = totalPages % 250 / 2.5;
+  const readVal = (totalPages % 250 / 2.5);
   const trainVal = Math.min((workoutDays / 150) * 100, 100);
 
-  // Dynamic Class Construction
   const brainCoreClass = isFlow ? 'bg-indigo-600' : (isSyncing ? 'bg-indigo-100' : 'bg-slate-50');
   const brainIconClass = isFlow ? 'text-white' : (isSyncing ? 'text-indigo-600' : 'text-slate-200');
 
@@ -78,7 +76,7 @@ function App() {
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900 font-sans antialiased">
       {showConfetti && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-md">
-          <h2 className="text-4xl font-black text-indigo-600 animate-bounce">FLOW STATE</h2>
+          <h2 className="text-4xl font-black text-indigo-600 animate-bounce text-center">FLOW STATE</h2>
         </div>
       )}
 
@@ -90,7 +88,7 @@ function App() {
               {logs.length}d
             </div>
             {streak >= 3 && (
-              <div className="bg-orange-500 text-white px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2">
+              <div className="bg-orange-500 text-white px-4 py-2 rounded-2xl shadow-lg flex items-center gap-2 animate-pulse">
                 <Flame size={18} fill="currentColor" />
                 <span className="font-bold">{streak}</span>
               </div>
@@ -103,7 +101,6 @@ function App() {
             <div className="flex justify-between items-center mb-6">
               <span className="text-[10px] font-black uppercase text-slate-400 tracking-widest flex items-center gap-2"><Glasses size={14}/> Library</span>
               <div className="h-2 w-32 bg-slate-100 rounded-full overflow-hidden">
-                {/* CSS VARIABLE INJECTION: The safest way to pass percentage to style */}
                 <div className="h-full bg-indigo-500 transition-all duration-1000" style={{ width: readVal + '%' }}></div>
               </div>
             </div>
@@ -117,13 +114,12 @@ function App() {
           </div>
 
           <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-200 flex flex-col items-center justify-center relative overflow-hidden">
-            <div className={`absolute inset-0 border-4 border-indigo-100 rounded-full animate-ping opacity-10 ${isFlow ? 'block' : 'hidden'}`}></div>
             <div className={`w-24 h-24 rounded-full flex items-center justify-center mb-4 transition-colors duration-500 ${brainCoreClass}`}>
               <Brain size={40} className={brainIconClass} />
             </div>
             <div className="text-center font-black">
               <div className="text-3xl">{learnMins}m</div>
-              <div className="text-[10px] text-indigo-500 uppercase mt-1 tracking-widest">{isFlow ? 'FLOW' : 'READY'}</div>
+              <div className="text-[10px] text-indigo-500 uppercase mt-1 tracking-widest">{isFlow ? 'FLOW' : 'IDLE'}</div>
             </div>
           </div>
         </div>
@@ -144,7 +140,7 @@ function App() {
                 <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
                   <div className="h-full bg-orange-500 transition-all duration-1000" style={{ width: trainVal + '%' }}></div>
                 </div>
-                <div className="text-[8px] font-black text-slate-500 mt-2 tracking-widest uppercase">Target 150</div>
+                <div className="text-[8px] font-black text-slate-500 mt-2 tracking-widest uppercase">Progress to 150</div>
               </div>
             </div>
           </div>
@@ -156,33 +152,4 @@ function App() {
             <input type="number" placeholder="Pages" className="p-3 bg-blue-50/50 rounded-xl font-bold text-sm" value={todayData.reading} onChange={e => setTodayData({...todayData, reading: e.target.value})} />
             <input type="number" placeholder="Fruits" className="p-3 bg-emerald-50/50 rounded-xl font-bold text-sm" value={todayData.fruits} onChange={e => setTodayData({...todayData, fruits: e.target.value})} />
             <input type="number" placeholder="Mins" className="p-3 bg-indigo-50/50 rounded-xl font-bold text-sm" value={todayData.learning} onChange={e => setTodayData({...todayData, learning: e.target.value})} />
-            <input type="text" placeholder="Exercise" className="p-3 bg-slate-50 rounded-xl font-bold text-sm lg:col-span-1" value={todayData.exercise} onChange={e => setTodayData({...todayData, exercise: e.target.value})} />
-            <button type="submit" className="p-3 bg-slate-900 text-white rounded-xl font-black text-sm hover:bg-indigo-600 transition-colors">LOG</button>
-          </form>
-        </div>
-
-        <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
-          <table className="w-full text-left border-collapse">
-            <tbody>
-              {logs.map(log => (
-                <tr key={log.date} className="border-b border-slate-50 last:border-0">
-                  <td className="p-4 text-xs font-bold text-slate-400">{log.date}</td>
-                  <td className="p-4 font-black text-xs uppercase space-x-4">
-                    <span className="text-blue-600">{log.reading || 0}p</span>
-                    <span className="text-emerald-600">{log.fruits || 0}f</span>
-                    <span className="text-indigo-600">{log.learning || 0}m</span>
-                  </td>
-                  <td className="p-4 text-right">
-                    <button onClick={() => deleteLog(log.date)} className="text-slate-200 hover:text-red-500"><Trash2 size={14}/></button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default App;
+            <input type="text" placeholder="Exercise" className="p-3 bg-slate-50 rounded-xl font-bold text-sm lg:col-span-1" value={todayData.exercise} onChange={e => setToday
