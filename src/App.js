@@ -47,7 +47,7 @@ function App() {
     }
   };
 
-  // --- LOGIC CALCULATIONS (Outside of JSX) ---
+  // --- Calculations ---
   const totalPages = logs.reduce((acc, curr) => acc + (parseInt(curr.reading) || 0), 0);
   const totalFruits = logs.reduce((acc, curr) => acc + (parseInt(curr.fruits) || 0), 0);
   const workoutDays = logs.filter(l => l.exercise && l.exercise.trim() !== '').length;
@@ -56,10 +56,9 @@ function App() {
   const hasExtraSprout = totalFruits % 2 !== 0;
   const learnMins = parseInt(todayData.learning) || 0;
 
-  // --- UI STATE STRINGS ---
+  // --- UI States ---
   const isSyncing = learnMins >= 30 && learnMins < 60;
   const isFlow = learnMins >= 60;
-
   const readStyle = { width: (totalPages % 250 / 2.5) + '%' };
   const trainStyle = { width: Math.min((workoutDays / 150) * 100, 100) + '%' };
 
@@ -78,10 +77,6 @@ function App() {
   } else {
     brainBoxClass += "bg-slate-50";
   }
-
-  // --- RENDER HELPERS ---
-  const bookVolumes = Array.from({ length: booksCount });
-  const fruitTrees = Array.from({ length: treesCount });
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900 font-sans antialiased">
@@ -103,7 +98,6 @@ function App() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          {/* LIBRARY */}
           <div className="lg:col-span-2 bg-white rounded-[2rem] p-8 border border-slate-200 shadow-sm">
             <div className="flex justify-between items-center mb-6">
               <span className="text-[10px] font-black uppercase text-slate-400 flex items-center gap-2">
@@ -114,7 +108,7 @@ function App() {
               </div>
             </div>
             <div className="flex items-end gap-2 overflow-x-auto h-32">
-              {bookVolumes.map((_, i) => (
+              {Array.from({ length: booksCount }).map((_, i) => (
                 <div key={i} className="flex-shrink-0 w-8 h-24 bg-slate-50 border border-slate-200 rounded flex items-center justify-center">
                   <span className="rotate-90 text-[8px] font-black text-slate-300 uppercase">Vol {i + 1}</span>
                 </div>
@@ -122,7 +116,6 @@ function App() {
             </div>
           </div>
 
-          {/* NEURAL STATUS */}
           <div className="bg-white rounded-[2rem] p-8 border border-slate-200 flex flex-col items-center justify-center shadow-sm">
             <div className={brainBoxClass}>
               <Brain size={32} className={brainColor} />
@@ -140,7 +133,7 @@ function App() {
               <TreeDeciduous size={14} className="text-emerald-500"/> Healthy Habits
             </h3>
             <div className="flex flex-wrap gap-2">
-              {fruitTrees.map((_, i) => <TreeDeciduous key={i} size={28} className="text-emerald-500" />)}
+              {Array.from({ length: treesCount }).map((_, i) => <TreeDeciduous key={i} size={28} className="text-emerald-500" />)}
               {hasExtraSprout && <Sprout size={20} className="text-emerald-300 animate-bounce" />}
             </div>
           </div>
@@ -158,22 +151,9 @@ function App() {
           </div>
         </div>
 
-        {/* INPUT */}
         <div className="bg-white rounded-[2rem] p-6 border border-slate-200 shadow-xl mb-6">
           <form onSubmit={saveDay} className="grid grid-cols-2 lg:grid-cols-6 gap-3">
             <input type="date" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none" value={todayData.date} onChange={e => setTodayData({...todayData, date: e.target.value})} />
             <input type="number" placeholder="Pages" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none" value={todayData.reading} onChange={e => setTodayData({...todayData, reading: e.target.value})} />
             <input type="number" placeholder="Fruits" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none" value={todayData.fruits} onChange={e => setTodayData({...todayData, fruits: e.target.value})} />
-            <input type="number" placeholder="Minutes" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none" value={todayData.learning} onChange={e => setTodayData({...todayData, learning: e.target.value})} />
-            <input type="text" placeholder="Activity" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none lg:col-span-1" value={todayData.exercise} onChange={e => setTodayData({...todayData, exercise: e.target.value})} />
-            <button type="submit" className="p-2 bg-slate-900 text-white rounded-lg font-black text-xs uppercase hover:bg-indigo-600 transition-colors">Record</button>
-          </form>
-        </div>
-
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-          <table className="w-full text-left">
-            <tbody>
-              {logs.map(log => (
-                <tr key={log.date} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
-                  <td className="p-4 text-[10px] font-bold text-slate-400">{log.date}</td>
-                  <td className="p-4 font-black text-
+            <input type="number" placeholder="Minutes" className="p-2 bg-slate-50 rounded-lg font-bold text-
