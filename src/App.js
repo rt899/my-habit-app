@@ -36,7 +36,7 @@ function App() {
     
     setLogs(updated);
     localStorage.setItem('myHabitAppData', JSON.stringify(updated));
-    setTodayData({ ...todayData, reading: '', exercise: '', fruits: 0, learning: '', screentime: '' });
+    setTodayData({ ...todayData, date: new Date().toISOString().split('T')[0], reading: '', exercise: '', fruits: 0, learning: '', screentime: '' });
   };
 
   const deleteLog = (date) => {
@@ -56,33 +56,32 @@ function App() {
   const hasExtraSprout = totalFruits % 2 !== 0;
   const learnMins = parseInt(todayData.learning) || 0;
 
-  // --- UI States ---
+  // --- Style & Class Pre-Calculation ---
   const isSyncing = learnMins >= 30 && learnMins < 60;
   const isFlow = learnMins >= 60;
-  const readStyle = { width: (totalPages % 250 / 2.5) + '%' };
-  const trainStyle = { width: Math.min((workoutDays / 150) * 100, 100) + '%' };
+  
+  const readWidth = (totalPages % 250 / 2.5) + '%';
+  const trainWidth = Math.min((workoutDays / 150) * 100, 100) + '%';
 
-  let brainBoxClass = "w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all ";
-  let brainColor = "text-slate-200";
-  let neuralText = "NEURAL IDLE";
+  let brainClass = 'w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all bg-slate-50';
+  let brainIconColor = 'text-slate-200';
+  let neuralStatus = 'NEURAL IDLE';
 
   if (isFlow) {
-    brainBoxClass += "bg-indigo-600 shadow-lg animate-pulse";
-    brainColor = "text-white";
-    neuralText = "DEEP FOCUS";
+    brainClass = 'w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all bg-indigo-600 shadow-lg animate-pulse';
+    brainIconColor = 'text-white';
+    neuralStatus = 'DEEP FOCUS';
   } else if (isSyncing) {
-    brainBoxClass += "bg-indigo-100";
-    brainColor = "text-indigo-600";
-    neuralText = "FOCUS BUILDING";
-  } else {
-    brainBoxClass += "bg-slate-50";
+    brainClass = 'w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all bg-indigo-100';
+    brainIconColor = 'text-indigo-600';
+    neuralStatus = 'FOCUS BUILDING';
   }
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900 font-sans antialiased">
       {showConfetti && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-md">
-          <h2 className="text-4xl font-black text-indigo-600 italic uppercase">MILESTONE REACHED</h2>
+          <h2 className="text-4xl font-black text-indigo-600 italic uppercase">Milestone Reached</h2>
         </div>
       )}
 
@@ -92,8 +91,8 @@ function App() {
             <h1 className="text-4xl font-black italic tracking-tighter uppercase">HABIT_TRACKER</h1>
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Personal Performance Log</p>
           </div>
-          <div className="bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm font-bold text-xs uppercase">
-            {logs.length} Days Recorded
+          <div className="bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm font-bold text-xs">
+            {logs.length} DAYS RECORDED
           </div>
         </header>
 
@@ -104,7 +103,7 @@ function App() {
                 <Glasses size={14}/> Reading Progress
               </span>
               <div className="h-1.5 w-32 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-500" style={readStyle}></div>
+                <div className="h-full bg-indigo-500" style={{ width: readWidth }}></div>
               </div>
             </div>
             <div className="flex items-end gap-2 overflow-x-auto h-32">
@@ -117,12 +116,12 @@ function App() {
           </div>
 
           <div className="bg-white rounded-[2rem] p-8 border border-slate-200 flex flex-col items-center justify-center shadow-sm">
-            <div className={brainBoxClass}>
-              <Brain size={32} className={brainColor} />
+            <div className={brainClass}>
+              <Brain size={32} className={brainIconColor} />
             </div>
             <div className="text-center font-black">
               <div className="text-2xl tracking-tighter">{learnMins}m</div>
-              <div className="text-[8px] text-indigo-500 uppercase mt-1 tracking-widest">{neuralText}</div>
+              <div className="text-[8px] text-indigo-500 uppercase mt-1 tracking-widest">{neuralStatus}</div>
             </div>
           </div>
         </div>
@@ -133,7 +132,9 @@ function App() {
               <TreeDeciduous size={14} className="text-emerald-500"/> Healthy Habits
             </h3>
             <div className="flex flex-wrap gap-2">
-              {Array.from({ length: treesCount }).map((_, i) => <TreeDeciduous key={i} size={28} className="text-emerald-500" />)}
+              {Array.from({ length: treesCount }).map((_, i) => (
+                <TreeDeciduous key={i} size={28} className="text-emerald-500" />
+              ))}
               {hasExtraSprout && <Sprout size={20} className="text-emerald-300 animate-bounce" />}
             </div>
           </div>
@@ -145,7 +146,7 @@ function App() {
             </div>
             <div className="w-1/2">
               <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-orange-500" style={trainStyle}></div>
+                <div className="h-full bg-orange-500" style={{ width: trainWidth }}></div>
               </div>
             </div>
           </div>
@@ -156,4 +157,36 @@ function App() {
             <input type="date" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none" value={todayData.date} onChange={e => setTodayData({...todayData, date: e.target.value})} />
             <input type="number" placeholder="Pages" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none" value={todayData.reading} onChange={e => setTodayData({...todayData, reading: e.target.value})} />
             <input type="number" placeholder="Fruits" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none" value={todayData.fruits} onChange={e => setTodayData({...todayData, fruits: e.target.value})} />
-            <input type="number" placeholder="Minutes" className="p-2 bg-slate-50 rounded-lg font-bold text-
+            <input type="number" placeholder="Minutes" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none" value={todayData.learning} onChange={e => setTodayData({...todayData, learning: e.target.value})} />
+            <input type="text" placeholder="Activity" className="p-2 bg-slate-50 rounded-lg font-bold text-xs outline-none lg:col-span-1" value={todayData.exercise} onChange={e => setTodayData({...todayData, exercise: e.target.value})} />
+            <button type="submit" className="p-2 bg-slate-900 text-white rounded-lg font-black text-xs uppercase hover:bg-indigo-600 transition-colors">Record</button>
+          </form>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm mb-10">
+          <table className="w-full text-left">
+            <tbody>
+              {logs.map(log => (
+                <tr key={log.date} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50">
+                  <td className="p-4 text-[10px] font-bold text-slate-400">{log.date}</td>
+                  <td className="p-4 font-black text-[10px] uppercase space-x-3">
+                    <span className="text-blue-600">{log.reading || 0} Pages</span>
+                    <span className="text-emerald-600">{log.fruits || 0} Fruit</span>
+                    <span className="text-indigo-600">{log.learning || 0} Min</span>
+                  </td>
+                  <td className="p-4 text-right">
+                    <button onClick={() => deleteLog(log.date)} className="text-slate-200 hover:text-red-500">
+                      <Trash2 size={12}/>
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
