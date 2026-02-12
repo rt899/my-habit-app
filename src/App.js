@@ -56,28 +56,23 @@ function App() {
     }
   };
 
-  // --- READING CALCULATIONS ---
+  // --- Calculations ---
   const totalPages = logs.reduce((acc, curr) => acc + (parseInt(curr.reading) || 0), 0);
   const booksCompleted = Math.floor(totalPages / 250);
   const pagesInCurrentBook = totalPages % 250;
   const readWidth = (pagesInCurrentBook / 250 * 100) + '%';
 
-  const getBookColor = (index) => {
-    const pos = index + 1;
-    if (pos % 10 === 0) return 'bg-yellow-500 border-yellow-600'; 
-    if (pos % 5 === 0) return 'bg-rose-500 border-rose-600';     
-    if (pos % 2 === 0) return 'bg-emerald-500 border-emerald-600'; 
-    return 'bg-indigo-600 border-indigo-700'; 
-  };
-
-  // --- EXERCISE CALCULATIONS ---
   const workoutDays = logs.filter(l => l.exercise && l.exercise.trim() !== '').length;
   const exerciseTarget = 150;
   const exerciseProgress = Math.min((workoutDays / exerciseTarget) * 100, 100) + '%';
   const daysRemaining = Math.max(exerciseTarget - workoutDays, 0);
 
-  // --- LEARNING BULB LOGIC ---
   const learnMins = parseInt(todayData.learning) || 0;
+  const totalFruits = logs.reduce((acc, curr) => acc + (parseInt(curr.fruits) || 0), 0);
+  const treesCount = Math.floor(totalFruits / 2);
+  const hasExtraSprout = totalFruits % 2 !== 0;
+
+  // --- Style Logic ---
   let bulbClass = 'w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all duration-500 bg-slate-50';
   let bulbIconColor = 'text-slate-200';
   let bulbShadow = 'none';
@@ -105,11 +100,6 @@ function App() {
     neuralStatus = '25% FLICKER';
   }
 
-  // --- FRUIT LOGIC ---
-  const totalFruits = logs.reduce((acc, curr) => acc + (parseInt(curr.fruits) || 0), 0);
-  const treesCount = Math.floor(totalFruits / 2);
-  const hasExtraSprout = totalFruits % 2 !== 0;
-
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900 font-sans antialiased">
       {showConfetti && (
@@ -122,9 +112,7 @@ function App() {
         <header className="flex justify-between items-center mb-10">
           <div>
             <h1 className="text-4xl font-black italic tracking-tighter uppercase">HABIT_TRACKER</h1>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
-               Status: {workoutDays >= 150 ? 'Elite Athlete' : 'On The Climb'}
-            </p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Status: Consistent</p>
           </div>
           <div className="bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm font-bold text-xs uppercase">
             {logs.length} DAYS LOGGED
@@ -139,3 +127,12 @@ function App() {
               </span>
               <div className="h-1.5 w-48 bg-slate-100 rounded-full overflow-hidden">
                 <div className="h-full bg-blue-500 transition-all duration-1000" style={{ width: readWidth }}></div>
+              </div>
+            </div>
+            <div className="flex items-end gap-2 overflow-x-auto h-32 pb-2">
+              {Array.from({ length: booksCompleted }).map((_, i) => {
+                const pos = i + 1;
+                let colorClass = 'bg-indigo-600 border-indigo-700';
+                if (pos % 10 === 0) colorClass = 'bg-yellow-500 border-yellow-600';
+                else if (pos % 5 === 0) colorClass = 'bg-rose-500 border-rose-600';
+                else if (pos % 2 === 0) colorClass = 'bg-emerald-50
