@@ -18,7 +18,11 @@ function App() {
   useEffect(() => {
     const saved = localStorage.getItem('myHabitAppData');
     if (saved) {
-      try { setLogs(JSON.parse(saved)); } catch (e) { setLogs([]); }
+      try { 
+        setLogs(JSON.parse(saved)); 
+      } catch (e) { 
+        setLogs([]); 
+      }
     }
   }, []);
 
@@ -66,19 +70,21 @@ function App() {
   const totalPages = logs.reduce((acc, curr) => acc + (parseInt(curr.reading) || 0), 0);
   const booksCompleted = Math.floor(totalPages / 250);
   const pagesInCurrentBook = totalPages % 250;
-  const readWidth = (pagesInCurrentBook / 250) * 100 + "%";
+  const readProgress = (pagesInCurrentBook / 250) * 100;
 
   const workoutDays = logs.filter(l => l.exercise && l.exercise.trim() !== '').length;
   const exerciseTarget = 150;
-  const exerciseProgress = Math.min((workoutDays / exerciseTarget) * 100, 100) + "%";
+  const exerciseProgressValue = Math.min((workoutDays / exerciseTarget) * 100, 100);
   const daysRemaining = Math.max(exerciseTarget - workoutDays, 0);
 
   const totalFruits = logs.reduce((acc, curr) => acc + (parseInt(curr.fruits) || 0), 0);
   const treesCount = Math.floor(totalFruits / 2);
   const hasExtraSprout = totalFruits % 2 !== 0;
 
-  // Live Bulb Logic (Reacts to input state)
+  // Live Bulb Logic (Build-Safe String Concat)
   const currentLearn = parseInt(todayData.learning) || 0;
-  let bulbColor = 'bg-slate-100 text-slate-300';
-  let neuralStatus = 'IDLE';
-  if (currentLearn >= 60) { bulbColor = 'bg-yellow-400 text-white animate-pulse shadow-[0_0_
+  let bulbBaseClass = "w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all duration-500 ";
+  let bulbStateClass = "bg-slate-100 text-slate-300";
+  let neuralStatus = "IDLE";
+
+  if
