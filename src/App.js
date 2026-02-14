@@ -66,28 +66,33 @@ function App() {
     downloadAnchorNode.remove();
   };
 
-  // --- Calculations ---
+  // --- SAFE CALCULATIONS ---
   const totalPages = logs.reduce((acc, curr) => acc + (parseInt(curr.reading) || 0), 0);
   const booksCompleted = Math.floor(totalPages / 250);
   const pagesInCurrentBook = totalPages % 250;
-  const readProgress = (pagesInCurrentBook / 250) * 100;
+  
+  // Moved string creation here to avoid line 125 error
+  const readProgressStyle = { width: (pagesInCurrentBook / 250) * 100 + "%" };
 
   const workoutDays = logs.filter(l => l.exercise && l.exercise.trim() !== '').length;
   const exerciseTarget = 150;
   const exerciseProgressValue = Math.min((workoutDays / exerciseTarget) * 100, 100);
+  
+  // Moved string creation here to avoid line 125 error
+  const exerciseProgressStyle = { width: exerciseProgressValue + "%" };
+  
   const daysRemaining = Math.max(exerciseTarget - workoutDays, 0);
 
   const totalFruits = logs.reduce((acc, curr) => acc + (parseInt(curr.fruits) || 0), 0);
   const treesCount = Math.floor(totalFruits / 2);
   const hasExtraSprout = totalFruits % 2 !== 0;
 
-  // --- Style Logic (Build-Safe Concatenation) ---
   const currentLearn = parseInt(todayData.learning) || 0;
   let bulbState = "bg-slate-100 text-slate-300";
   let neuralStatus = "IDLE";
 
   if (currentLearn >= 60) { 
-    bulbState = "bg-yellow-400 text-white animate-pulse shadow-lg"; 
+    bulbState = "bg-yellow-400 text-white shadow-lg"; 
     neuralStatus = "RADIANT"; 
   } else if (currentLearn >= 30) { 
     bulbState = "bg-yellow-200 text-yellow-700"; 
@@ -98,9 +103,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900 font-sans antialiased">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900 font-sans">
       {showConfetti && (
-        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-yellow-400 text-white px-8 py-4 rounded-full font-black italic shadow-2xl animate-bounce">
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-yellow-400 text-white px-8 py-4 rounded-full font-black shadow-2xl">
           MASTERY ACHIEVED!
         </div>
       )}
@@ -108,18 +113,41 @@ function App() {
       <div className="max-w-5xl mx-auto">
         <header className="flex justify-between items-end mb-8">
           <div>
-            <h1 className="text-4xl font-black italic tracking-tighter uppercase leading-none">HABIT_OS</h1>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">v2.0 Terminal Interface</p>
+            <h1 className="text-4xl font-black italic uppercase leading-none">HABIT_OS</h1>
+            <p className="text-[10px] font-bold text-slate-400 uppercase mt-2">v2.0 Terminal</p>
           </div>
-          <button onClick={exportData} className="p-3 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors shadow-sm">
+          <button onClick={exportData} className="p-3 bg-white border border-slate-200 rounded-2xl">
             <Download size={18} className="text-slate-400" />
           </button>
         </header>
 
-        {/* INPUT SECTION */}
         <section className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-200 mb-8">
-          <div className="flex items-center gap-2 mb-6 ml-2">
-            <PlusCircle size={18} className="text-indigo-500" />
-            <h2 className="text-xs font-black uppercase tracking-widest text-slate-500">Log Progress</h2>
-          </div>
-          <form onSubmit={saveDay} className="grid grid-cols-2 md:grid-cols-3
+          <form onSubmit={saveDay} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="flex flex-col gap-1">
+              <label className="text-[9px] font-bold text-slate-400 uppercase">Date</label>
+              <input type="date" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.date} onChange={(e) => setTodayData({...todayData, date: e.target.value})} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-[9px] font-bold text-slate-400 uppercase">Pages</label>
+              <input type="number" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.reading} onChange={(e) => setTodayData({...todayData, reading: e.target.value})} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-[9px] font-bold text-slate-400 uppercase">Fruits</label>
+              <input type="number" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.fruits} onChange={(e) => setTodayData({...todayData, fruits: e.target.value})} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-[9px] font-bold text-slate-400 uppercase">Mins</label>
+              <input type="number" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.learning} onChange={(e) => setTodayData({...todayData, learning: e.target.value})} />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label className="text-[9px] font-bold text-slate-400 uppercase">Exercise</label>
+              <input type="text" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.exercise} onChange={(e) => setTodayData({...todayData, exercise: e.target.value})} />
+            </div>
+            <div className="flex items-end">
+              <button type="submit" className="w-full p-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase">Record</button>
+            </div>
+          </form>
+        </section>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded
