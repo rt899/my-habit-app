@@ -81,13 +81,13 @@ function App() {
   const treesCount = Math.floor(totalFruits / 2);
   const hasExtraSprout = totalFruits % 2 !== 0;
 
-  // Live Bulb Logic
+  // --- Style Logic (Build-Safe Concatenation) ---
   const currentLearn = parseInt(todayData.learning) || 0;
   let bulbState = "bg-slate-100 text-slate-300";
   let neuralStatus = "IDLE";
 
   if (currentLearn >= 60) { 
-    bulbState = "bg-yellow-400 text-white animate-pulse shadow-lg shadow-yellow-200"; 
+    bulbState = "bg-yellow-400 text-white animate-pulse shadow-lg"; 
     neuralStatus = "RADIANT"; 
   } else if (currentLearn >= 30) { 
     bulbState = "bg-yellow-200 text-yellow-700"; 
@@ -122,4 +122,4 @@ function App() {
             <PlusCircle size={18} className="text-indigo-500" />
             <h2 className="text-xs font-black uppercase tracking-widest text-slate-500">Log Progress</h2>
           </div>
-          <form onSubmit={saveDay} className="grid grid-
+          <form onSubmit={saveDay} className="grid grid-cols-2 md:grid-cols-3
