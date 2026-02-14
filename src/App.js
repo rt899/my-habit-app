@@ -81,10 +81,45 @@ function App() {
   const treesCount = Math.floor(totalFruits / 2);
   const hasExtraSprout = totalFruits % 2 !== 0;
 
-  // Live Bulb Logic (Build-Safe String Concat)
+  // Live Bulb Logic
   const currentLearn = parseInt(todayData.learning) || 0;
-  let bulbBaseClass = "w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all duration-500 ";
-  let bulbStateClass = "bg-slate-100 text-slate-300";
+  let bulbState = "bg-slate-100 text-slate-300";
   let neuralStatus = "IDLE";
 
-  if
+  if (currentLearn >= 60) { 
+    bulbState = "bg-yellow-400 text-white animate-pulse shadow-lg shadow-yellow-200"; 
+    neuralStatus = "RADIANT"; 
+  } else if (currentLearn >= 30) { 
+    bulbState = "bg-yellow-200 text-yellow-700"; 
+    neuralStatus = "STEADY"; 
+  } else if (currentLearn > 0) { 
+    bulbState = "bg-orange-100 text-orange-400"; 
+    neuralStatus = "FLICKERING"; 
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900 font-sans antialiased">
+      {showConfetti && (
+        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-yellow-400 text-white px-8 py-4 rounded-full font-black italic shadow-2xl animate-bounce">
+          MASTERY ACHIEVED!
+        </div>
+      )}
+
+      <div className="max-w-5xl mx-auto">
+        <header className="flex justify-between items-end mb-8">
+          <div>
+            <h1 className="text-4xl font-black italic tracking-tighter uppercase leading-none">HABIT_OS</h1>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mt-2">v2.0 Terminal Interface</p>
+          </div>
+          <button onClick={exportData} className="p-3 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 transition-colors shadow-sm">
+            <Download size={18} className="text-slate-400" />
+          </button>
+        </header>
+
+        {/* INPUT SECTION */}
+        <section className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-200 mb-8">
+          <div className="flex items-center gap-2 mb-6 ml-2">
+            <PlusCircle size={18} className="text-indigo-500" />
+            <h2 className="text-xs font-black uppercase tracking-widest text-slate-500">Log Progress</h2>
+          </div>
+          <form onSubmit={saveDay} className="grid grid-
