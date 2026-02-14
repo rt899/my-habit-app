@@ -49,7 +49,7 @@ function App() {
   };
 
   const deleteLog = (date) => {
-    if (window.confirm('Delete this entry?')) {
+    if (window.confirm('Delete?')) {
       const updated = logs.filter(l => l.date !== date);
       setLogs(updated);
       localStorage.setItem('myHabitAppData', JSON.stringify(updated));
@@ -66,88 +66,95 @@ function App() {
     downloadAnchorNode.remove();
   };
 
-  // --- SAFE CALCULATIONS ---
+  // --- PRE-CALCULATED VALUES ---
   const totalPages = logs.reduce((acc, curr) => acc + (parseInt(curr.reading) || 0), 0);
   const booksCompleted = Math.floor(totalPages / 250);
   const pagesInCurrentBook = totalPages % 250;
   
-  // Moved string creation here to avoid line 125 error
-  const readProgressStyle = { width: (pagesInCurrentBook / 250) * 100 + "%" };
+  // Clean Percentages
+  const readPct = (pagesInCurrentBook / 250) * 100;
+  const readStyle = { width: readPct + "%" };
 
   const workoutDays = logs.filter(l => l.exercise && l.exercise.trim() !== '').length;
   const exerciseTarget = 150;
-  const exerciseProgressValue = Math.min((workoutDays / exerciseTarget) * 100, 100);
-  
-  // Moved string creation here to avoid line 125 error
-  const exerciseProgressStyle = { width: exerciseProgressValue + "%" };
+  const exercisePct = Math.min((workoutDays / exerciseTarget) * 100, 100);
+  const exerciseStyle = { width: exercisePct + "%" };
   
   const daysRemaining = Math.max(exerciseTarget - workoutDays, 0);
 
   const totalFruits = logs.reduce((acc, curr) => acc + (parseInt(curr.fruits) || 0), 0);
   const treesCount = Math.floor(totalFruits / 2);
-  const hasExtraSprout = totalFruits % 2 !== 0;
 
   const currentLearn = parseInt(todayData.learning) || 0;
-  let bulbState = "bg-slate-100 text-slate-300";
-  let neuralStatus = "IDLE";
+  let bulbColor = "bg-slate-100 text-slate-300";
+  if (currentLearn >= 60) bulbColor = "bg-yellow-400 text-white";
+  else if (currentLearn >= 30) bulbColor = "bg-yellow-200 text-yellow-700";
 
-  if (currentLearn >= 60) { 
-    bulbState = "bg-yellow-400 text-white shadow-lg"; 
-    neuralStatus = "RADIANT"; 
-  } else if (currentLearn >= 30) { 
-    bulbState = "bg-yellow-200 text-yellow-700"; 
-    neuralStatus = "STEADY"; 
-  } else if (currentLearn > 0) { 
-    bulbState = "bg-orange-100 text-orange-400"; 
-    neuralStatus = "FLICKERING"; 
-  }
+  // Build-safe bulb class
+  const bulbFullClass = "w-16 h-16 rounded-full flex items-center justify-center mb-4 " + bulbColor;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 text-slate-900 font-sans">
-      {showConfetti && (
-        <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-yellow-400 text-white px-8 py-4 rounded-full font-black shadow-2xl">
-          MASTERY ACHIEVED!
-        </div>
-      )}
-
-      <div className="max-w-5xl mx-auto">
-        <header className="flex justify-between items-end mb-8">
-          <div>
-            <h1 className="text-4xl font-black italic uppercase leading-none">HABIT_OS</h1>
-            <p className="text-[10px] font-bold text-slate-400 uppercase mt-2">v2.0 Terminal</p>
-          </div>
-          <button onClick={exportData} className="p-3 bg-white border border-slate-200 rounded-2xl">
-            <Download size={18} className="text-slate-400" />
+    <div className="min-h-screen bg-slate-50 p-4 text-slate-900">
+      <div className="max-w-4xl mx-auto">
+        
+        <header className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-black italic">HABIT_OS</h1>
+          <button onClick={exportData} className="p-2 bg-white border rounded-xl">
+            <Download size={20} />
           </button>
         </header>
 
-        <section className="bg-white rounded-[2.5rem] p-6 shadow-sm border border-slate-200 mb-8">
-          <form onSubmit={saveDay} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <div className="flex flex-col gap-1">
-              <label className="text-[9px] font-bold text-slate-400 uppercase">Date</label>
-              <input type="date" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.date} onChange={(e) => setTodayData({...todayData, date: e.target.value})} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-[9px] font-bold text-slate-400 uppercase">Pages</label>
-              <input type="number" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.reading} onChange={(e) => setTodayData({...todayData, reading: e.target.value})} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-[9px] font-bold text-slate-400 uppercase">Fruits</label>
-              <input type="number" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.fruits} onChange={(e) => setTodayData({...todayData, fruits: e.target.value})} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-[9px] font-bold text-slate-400 uppercase">Mins</label>
-              <input type="number" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.learning} onChange={(e) => setTodayData({...todayData, learning: e.target.value})} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-[9px] font-bold text-slate-400 uppercase">Exercise</label>
-              <input type="text" className="p-3 bg-slate-50 rounded-2xl text-xs outline-none" value={todayData.exercise} onChange={(e) => setTodayData({...todayData, exercise: e.target.value})} />
-            </div>
-            <div className="flex items-end">
-              <button type="submit" className="w-full p-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase">Record</button>
-            </div>
+        <section className="bg-white rounded-3xl p-6 shadow-sm mb-6 border border-slate-200">
+          <form onSubmit={saveDay} className="grid grid-cols-2 md:grid-cols-6 gap-4">
+            <input type="date" className="p-2 bg-slate-100 rounded-lg text-xs" value={todayData.date} onChange={(e) => setTodayData({...todayData, date: e.target.value})} />
+            <input type="number" placeholder="Pages" className="p-2 bg-slate-100 rounded-lg text-xs" value={todayData.reading} onChange={(e) => setTodayData({...todayData, reading: e.target.value})} />
+            <input type="number" placeholder="Fruits" className="p-2 bg-slate-100 rounded-lg text-xs" value={todayData.fruits} onChange={(e) => setTodayData({...todayData, fruits: e.target.value})} />
+            <input type="number" placeholder="Mins" className="p-2 bg-slate-100 rounded-lg text-xs" value={todayData.learning} onChange={(e) => setTodayData({...todayData, learning: e.target.value})} />
+            <input type="text" placeholder="Exercise" className="p-2 bg-slate-100 rounded-lg text-xs" value={todayData.exercise} onChange={(e) => setTodayData({...todayData, exercise: e.target.value})} />
+            <button type="submit" className="bg-slate-900 text-white rounded-lg text-xs font-bold uppercase">Save</button>
           </form>
         </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white p-6 rounded-3xl border border-slate-200">
+            <div className="flex justify-between mb-4">
+              <span className="text-xs font-bold uppercase text-slate-400">Reading</span>
+              <span className="text-xs font-bold text-blue-500">{pagesInCurrentBook}/250</span>
+            </div>
+            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-full bg-blue-500" style={readStyle}></div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 flex flex-col items-center">
+            <div className={bulbFullClass}>
+              <Lightbulb size={24} />
+            </div>
+            <span className="text-xl font-black">{currentLearn}m</span>
+          </div>
+
+          <div className="bg-white p-6 rounded-3xl border border-slate-200">
+             <div className="flex flex-wrap gap-2">
+                {Array.from({ length: treesCount }).map((_, i) => (
+                  <TreeDeciduous key={i} size={20} className="text-emerald-500" />
+                ))}
+             </div>
+          </div>
+
+          <div className="bg-slate-900 p-6 rounded-3xl text-white">
+            <div className="flex justify-between mb-4">
+              <span className="text-4xl font-black">{workoutDays}</span>
+              <span className="text-xs text-orange-400">{daysRemaining} Left</span>
+            </div>
+            <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full bg-orange-500" style={exerciseStyle}></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+export default App;
